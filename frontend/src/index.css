@@ -1,0 +1,198 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-serif: 'Cinzel', serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: #0b0d13;
+    color: #f3f4f6;
+    overflow-x: hidden;
+  }
+}
+
+/* 3D Chess Board Perspective */
+.chess-perspective-container {
+  perspective: 1200px;
+  perspective-origin: center 85%;
+}
+
+.chess-board-3d {
+  transform-style: preserve-3d;
+  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.chess-board-3d.tilted {
+  transform: rotateX(24deg) translateY(-8px);
+}
+
+.chess-board-3d.flat {
+  transform: rotateX(0deg) translateY(0);
+}
+
+/* Board Themes */
+/* 1. Classic Wood */
+.theme-wood {
+  --board-border: #452410;
+  --board-bevel: #2b1509;
+  --sq-light: #e3c193;
+  --sq-dark: #8b4a24;
+  --sq-light-text: #8b4a24;
+  --sq-dark-text: #e3c193;
+  --board-shadow: rgba(20, 10, 5, 0.7);
+}
+
+/* 2. Marble */
+.theme-marble {
+  --board-border: #334155;
+  --board-bevel: #1e293b;
+  --sq-light: #e2e8f0;
+  --sq-dark: #64748b;
+  --sq-light-text: #475569;
+  --sq-dark-text: #f1f5f9;
+  --board-shadow: rgba(15, 23, 42, 0.7);
+}
+
+/* 3. Royal Gold */
+.theme-gold {
+  --board-border: #3d2f09;
+  --board-bevel: #241c05;
+  --sq-light: #fae8b2;
+  --sq-dark: #b8860b;
+  --sq-light-text: #785505;
+  --sq-dark-text: #fef3c7;
+  --board-shadow: rgba(30, 20, 5, 0.8);
+}
+
+/* 4. Dark Modern */
+.theme-darkmodern {
+  --board-border: #1e2029;
+  --board-bevel: #13141a;
+  --sq-light: #32374a;
+  --sq-dark: #1a1c24;
+  --sq-light-text: #94a3b8;
+  --sq-dark-text: #64748b;
+  --board-shadow: rgba(0, 0, 0, 0.8);
+}
+
+/* 5. Cyberpunk */
+.theme-cyberpunk {
+  --board-border: #28093d;
+  --board-bevel: #170424;
+  --sq-light: #06b6d4;
+  --sq-dark: #d946ef;
+  --sq-light-text: #164e63;
+  --sq-dark-text: #701a75;
+  --board-shadow: rgba(217, 70, 239, 0.35);
+}
+
+/* 6. Neon Emerald */
+.theme-neon {
+  --board-border: #064e3b;
+  --board-bevel: #022c22;
+  --sq-light: #a7f3d0;
+  --sq-dark: #059669;
+  --sq-light-text: #065f46;
+  --sq-dark-text: #d1fae5;
+  --board-shadow: rgba(5, 150, 105, 0.4);
+}
+
+/* Board 3D Frame & Edge Styling */
+.board-outer-frame {
+  background: var(--board-border);
+  box-shadow: 
+    0 25px 50px -12px var(--board-shadow),
+    0 10px 0 0 var(--board-bevel),
+    inset 0 2px 4px rgba(255, 255, 255, 0.15),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.6);
+}
+
+/* Glassmorphism Classes */
+.glass-panel {
+  background: rgba(18, 22, 33, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
+}
+
+.glass-card {
+  background: rgba(25, 30, 45, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.glass-button {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-button:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.glass-button:active {
+  transform: translateY(1px);
+}
+
+/* Piece Elevation and Subtle Shading */
+.chess-piece {
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.45));
+  transition: transform 0.18s cubic-bezier(0.2, 0, 0, 1);
+  will-change: transform;
+  user-select: none;
+}
+
+.chess-piece:hover {
+  transform: scale(1.08) translateY(-3px);
+  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.55));
+}
+
+.chess-piece.dragging {
+  cursor: grabbing;
+  transform: scale(1.15) translateY(-8px);
+  filter: drop-shadow(0 15px 20px rgba(0, 0, 0, 0.65));
+  z-index: 50;
+}
+
+/* King in check pulsing glow */
+@keyframes checkPulse {
+  0%, 100% {
+    box-shadow: inset 0 0 16px 4px rgba(239, 68, 68, 0.9), 0 0 20px 4px rgba(239, 68, 68, 0.7);
+  }
+  50% {
+    box-shadow: inset 0 0 8px 2px rgba(239, 68, 68, 0.4), 0 0 10px 2px rgba(239, 68, 68, 0.3);
+  }
+}
+
+.king-in-check {
+  animation: checkPulse 1.2s infinite ease-in-out;
+  background-color: rgba(239, 68, 68, 0.5) !important;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
