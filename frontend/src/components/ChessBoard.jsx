@@ -16,6 +16,9 @@ export function ChessBoard({
   customLightColor = '',
   customDarkColor = '',
   disabled = false,
+  moveBadge = null,
+  badges = null,
+  arrows = [],
 }) {
   const [selectedSquare, setSelectedSquare] = useState(null);
   const [possibleMoves, setPossibleMoves] = useState([]);
@@ -140,6 +143,19 @@ export function ChessBoard({
     return {};
   };
 
+  // Coordinate helper for SVG Arrows
+  const getSquareCoords = useCallback((sq) => {
+    if (!sq || sq.length < 2) return { x: 50, y: 50 };
+    const fileChar = sq[0];
+    const rankNum = parseInt(sq[1], 10);
+    const fileIdx = flipped ? 'h'.charCodeAt(0) - fileChar.charCodeAt(0) : fileChar.charCodeAt(0) - 'a'.charCodeAt(0);
+    const rankIdx = flipped ? rankNum - 1 : 8 - rankNum;
+    return {
+      x: fileIdx * 12.5 + 6.25,
+      y: rankIdx * 12.5 + 6.25,
+    };
+  }, [flipped]);
+
   return (
     <div className={`chess-perspective-container select-none ${theme ? `theme-${theme}` : 'theme-wood'}`}>
       <div className={`chess-board-3d ${is3d ? 'tilted' : 'flat'} transition-all duration-500`}>
@@ -147,7 +163,7 @@ export function ChessBoard({
         <div className="board-outer-frame p-3 sm:p-4 rounded-xl sm:rounded-2xl transition-all duration-300">
           <div className="relative border-2 border-black/40 rounded-lg overflow-hidden shadow-inner">
             {/* 8x8 Board Grid */}
-            <div className="grid grid-cols-8 grid-rows-8 w-[min(88vw,480px)] h-[min(88vw,480px)] sm:w-[540px] sm:h-[540px] md:w-[600px] md:h-[600px] lg:w-[640px] lg:h-[640px]">
+            <div className="relative grid grid-cols-8 grid-rows-8 w-[min(88vw,480px)] h-[min(88vw,480px)] sm:w-[540px] sm:h-[540px] md:w-[600px] md:h-[600px] lg:w-[640px] lg:h-[640px]">
               {ranks.map((rank, rankIdx) =>
                 files.map((file, fileIdx) => {
                   const square = `${file}${rank}`;
@@ -158,6 +174,9 @@ export function ChessBoard({
                   const isLastMoveSquare = lastMove && (lastMove.from === square || lastMove.to === square);
                   const isChecked = checkedKingSquare === square;
                   const isThreatened = threatenedSquares.has(square) && piece && piece.color === turn;
+
+                  // Move rating badge for this square
+                  const badge = (badges && badges[square]) || (moveBadge && moveBadge.square === square ? moveBadge : null);
 
                   // Check if this square is a possible move destination
                   const moveOption = possibleMoves.find(m => m.to === square);
@@ -225,6 +244,18 @@ export function ChessBoard({
                         </div>
                       )}
 
+                      {/* Move Classification Badge (Chess.com style) */}
+                      {badge && (
+                        <div
+                          className={`absolute top-0.5 right-0.5 z-30 min-w-5 h-5 px-1 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-black shadow-lg ring-1.5 ring-white/40 animate-in zoom-in-75 duration-200 pointer-events-none ${
+                            badge.badgeClass || 'bg-emerald-500 text-neutral-950'
+                          }`}
+                          title={badge.label || 'Rated Move'}
+                        >
+                          {badge.symbol}
+                        </div>
+                      )}
+
                       {/* Threat detection warning dot */}
                       {isThreatened && !moveOption && (
                         <div className="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500 animate-ping pointer-events-none" />
@@ -232,6 +263,77 @@ export function ChessBoard({
                     </div>
                   );
                 })
+              )}
+
+              {/* Dynamic SVG Arrows Overlay */}
+              {arrows && arrows.length > 0 && (
+                <svg
+                  className="absolute inset-0 w-full h-full pointer-events-none z-25 overflow-visible"
+                  viewBox="0 0 100 100"
+                  preserveAspectRatio="none"
+                >
+                  <defs>
+                    {arrows.map((arrow, idx) => {
+                      const color = arrow.color || '#10b981';
+                      return (
+                        <marker
+                          key={`arrow-head-${idx}`}
+                          id={`arrowhead-${idx}`}
+                          markerWidth="4"
+                          markerHeight="4"
+                          refX="2.5"
+                          refY="2"
+                          orient="auto"
+                        >
+                          <polygon points="0 0.5, 3.2 2, 0 3.5" fill={color} />
+                        </marker>
+                      );
+                    })}
+                  </defs>
+
+                  {arrows.map((arrow, idx) => {
+                    const from = getSquareCoords(arrow.from);
+                    const to = getSquareCoords(arrow.to);
+                    const color = arrow.color || '#10b981';
+                    const opacity = arrow.opacity ?? 0.85;
+
+                    // Shorten line slightly so arrow sits perfectly centered on destination
+                    const dx = to.x - from.x;
+                    const dy = to.y - from.y;
+                    const angle = Math.atan2(dy, dx);
+                    const startX = from.x + Math.cos(angle) * 2;
+                    const startY = from.y + Math.sin(angle) * 2;
+                    const endX = to.x - Math.cos(angle) * 2.5;
+                    const endY = to.y - Math.sin(angle) * 2.5;
+
+                    return (
+                      <g key={`arrow-g-${idx}`} opacity={opacity}>
+                        {/* Glow / Outline */}
+                        <line
+                          x1={startX}
+                          y1={startY}
+                          x2={endX}
+                          y2={endY}
+                          stroke="#000000"
+                          strokeWidth="2.8"
+                          strokeLinecap="round"
+                          opacity="0.35"
+                        />
+                        {/* Main Arrow Body */}
+                        <line
+                          x1={startX}
+                          y1={startY}
+                          x2={endX}
+                          y2={endY}
+                          stroke={color}
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          markerEnd={`url(#arrowhead-${idx})`}
+                        />
+                      </g>
+                    );
+                  })}
+                </svg>
               )}
             </div>
           </div>
