@@ -1,5 +1,5 @@
 import React from 'react';
-import { Crown, Bot, Users, Globe, Trophy, Settings, Volume2, VolumeX, Maximize2, Minimize2 } from 'lucide-react';
+import { Crown, Bot, Users, Globe, Trophy, Settings, Volume2, VolumeX, Maximize2, Minimize2, Zap } from 'lucide-react';
 
 export function Header({
   gameMode = 'ai',
@@ -9,6 +9,8 @@ export function Header({
   onOpenStats,
   onOpenSettings,
   onOpenMultiplayer,
+  onOpenReview,
+  hasMoves = false,
   soundEnabled = true,
   onToggleSound,
   isFullscreen = false,
@@ -80,6 +82,18 @@ export function Header({
               </option>
             ))}
           </select>
+
+          {/* Game Review Quick Launch */}
+          {onOpenReview && (
+            <button
+              onClick={onOpenReview}
+              title={hasMoves ? 'Open Game Review & Guidance' : 'Play moves first to review game'}
+              disabled={!hasMoves}
+              className="p-2 rounded-lg glass-button text-neutral-300 hover:text-emerald-400 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+            >
+              <Zap className="w-4 h-4 text-emerald-400" />
+            </button>
+          )}
 
           {/* Sound Toggle */}
           <button

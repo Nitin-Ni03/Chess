@@ -11,6 +11,7 @@ export function GameOverModal({
   onRematch,
   onNewGame,
   onClose,
+  onOpenReview,
 }) {
   if (!isOpen) return null;
 
@@ -84,6 +85,20 @@ export function GameOverModal({
 
         {/* Action Buttons */}
         <div className="space-y-2">
+          {/* Chess.com Style Game Review Button */}
+          {onOpenReview && (
+            <button
+              onClick={() => {
+                onClose();
+                onOpenReview();
+              }}
+              className="w-full py-3 rounded-xl bg-linear-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-neutral-950 font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/25 transition-all active:scale-98"
+            >
+              <Swords className="w-4 h-4" />
+              Game Review & Guidance
+            </button>
+          )}
+
           <button
             onClick={onRematch}
             className="w-full py-3 rounded-xl bg-linear-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-neutral-950 font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 transition-all active:scale-98"

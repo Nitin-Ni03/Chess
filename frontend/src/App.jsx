@@ -11,6 +11,7 @@ import { StatsModal } from './components/StatsModal';
 import { MultiplayerModal } from './components/MultiplayerModal';
 import { ImportModal } from './components/ImportModal';
 import { GameOverModal } from './components/GameOverModal';
+import { GameReviewModal } from './components/GameReviewModal';
 import { Header } from './components/Header';
 import { soundService } from './services/soundService';
 import { storage } from './utils/storage';
@@ -50,6 +51,7 @@ export default function App() {
   const [ratedMoves, setRatedMoves] = useState([]);
   const [activeRightTab, setActiveRightTab] = useState('moves'); // 'moves' | 'coach'
   const [isBestMoveArrowVisible, setIsBestMoveArrowVisible] = useState(false);
+  const [isGameReviewOpen, setIsGameReviewOpen] = useState(false);
 
   // Initialize Core Game Hook
   const {
@@ -436,6 +438,8 @@ export default function App() {
         onOpenStats={() => setIsStatsOpen(true)}
         onOpenSettings={() => setIsSettingsOpen(true)}
         onOpenMultiplayer={() => setIsMultiplayerOpen(true)}
+        onOpenReview={() => setIsGameReviewOpen(true)}
+        hasMoves={history.length > 0}
         soundEnabled={settings.soundEnabled}
         onToggleSound={() => handleUpdateSetting('soundEnabled', !settings.soundEnabled)}
         isFullscreen={isFullscreen}
@@ -667,6 +671,20 @@ export default function App() {
           resetGame();
         }}
         onClose={() => setIsGameOverModalOpen(false)}
+        onOpenReview={() => setIsGameReviewOpen(true)}
+      />
+
+      {/* Chess.com Style Full Game Review Modal */}
+      <GameReviewModal
+        isOpen={isGameReviewOpen}
+        onClose={() => setIsGameReviewOpen(false)}
+        history={history}
+        whitePlayerName={bottomPlayerInfo.name}
+        blackPlayerName={topPlayerInfo.name}
+        whiteElo={stats.elo}
+        blackElo={topPlayerInfo.rating}
+        theme={settings.theme}
+        is3d={settings.is3d}
       />
     </div>
   );
