@@ -172,8 +172,8 @@ export function ChessBoard({
                       className={`
                         relative flex items-center justify-center cursor-pointer transition-colors duration-150
                         ${isLight ? 'bg-[var(--sq-light)]' : 'bg-[var(--sq-dark)]'}
-                        ${isSelected ? '!bg-amber-400/60 ring-2 ring-inset ring-amber-300' : ''}
-                        ${isLastMoveSquare && !isSelected ? '!bg-yellow-400/40 ring-1 ring-inset ring-yellow-400/50' : ''}
+                        ${isSelected ? 'bg-amber-400/60! ring-2 ring-inset ring-amber-300' : ''}
+                        ${isLastMoveSquare && !isSelected ? 'bg-yellow-400/40! ring-1 ring-inset ring-yellow-400/50' : ''}
                         ${isChecked ? 'king-in-check z-10' : ''}
                       `}
                     >

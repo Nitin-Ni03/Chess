@@ -12,7 +12,7 @@ export function EvalBar({ score = 0, isFlipped = false }) {
   const displayScore = score > 0 ? `+${score.toFixed(1)}` : score === 0 ? '0.0' : score.toFixed(1);
 
   return (
-    <div className="hidden md:flex flex-col items-center justify-between h-[540px] md:h-[600px] lg:h-[640px] w-7 rounded-xl overflow-hidden glass-panel border border-white/10 shadow-lg relative p-0.5">
+    <div className="hidden md:flex flex-col items-center justify-between h-540px md:h-600px lg:h-640px w-7 rounded-xl overflow-hidden glass-panel border border-white/10 shadow-lg relative p-0.5">
       {/* Black's portion (top if normal, bottom if flipped) */}
       <div
         className="w-full bg-neutral-900 transition-all duration-500 ease-out flex items-start justify-center pt-1"

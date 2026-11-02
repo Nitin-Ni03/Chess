@@ -50,7 +50,7 @@ export function GameOverModal({
               <Handshake className="w-8 h-8" />
             </div>
           ) : isPlayerWinner ? (
-            <div className="w-full h-full rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-300 flex items-center justify-center text-neutral-950 shadow-amber-500/30">
+            <div className="w-full h-full rounded-2xl bg-linear-to-tr from-amber-500 to-amber-300 flex items-center justify-center text-neutral-950 shadow-amber-500/30">
               <Trophy className="w-8 h-8 animate-bounce" />
             </div>
           ) : (
@@ -86,7 +86,7 @@ export function GameOverModal({
         <div className="space-y-2">
           <button
             onClick={onRematch}
-            className="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-neutral-950 font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 transition-all active:scale-98"
+            className="w-full py-3 rounded-xl bg-linear-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-neutral-950 font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 transition-all active:scale-98"
           >
             <RotateCcw className="w-4 h-4" />
             Rematch

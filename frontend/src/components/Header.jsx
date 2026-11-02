@@ -27,11 +27,11 @@ export function Header({
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
         {/* Brand Logo */}
         <div className="flex items-center gap-2.5 cursor-pointer">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 to-amber-300 flex items-center justify-center text-neutral-950 shadow-md shadow-amber-500/20">
+          <div className="w-9 h-9 rounded-xl bg-linear-to-tr from-amber-500 to-amber-300 flex items-center justify-center text-neutral-950 shadow-md shadow-amber-500/20">
             <Crown className="w-5 h-5 fill-neutral-950" />
           </div>
           <div className="hidden sm:block">
-            <h1 className="font-serif font-black tracking-wider text-base text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-100">
+            <h1 className="font-serif font-black tracking-wider text-base text-transparent bg-clip-text bg-linear-to-r from-amber-200 via-amber-400 to-amber-100">
               GRANDMASTER
             </h1>
             <p className="text-[9px] tracking-widest text-neutral-400 uppercase -mt-0.5">Classic Chess 3D</p>
