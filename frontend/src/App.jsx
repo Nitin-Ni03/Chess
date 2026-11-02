@@ -5,6 +5,7 @@ import { PlayerCard } from './components/PlayerCard';
 import { EvalBar } from './components/EvalBar';
 import { MoveHistoryPanel } from './components/MoveHistoryPanel';
 import { CoachPanel } from './components/CoachPanel';
+import { StatsPanel } from './components/StatsPanel';
 import { PromotionModal } from './components/PromotionModal';
 import { SettingsModal } from './components/SettingsModal';
 import { StatsModal } from './components/StatsModal';
@@ -19,7 +20,7 @@ import { exportPGNContent } from './utils/chessHelpers';
 import { findBestMove, getMoveHint, getPositionEvalScore } from './ai/chessAI';
 import { analyzeMove } from './ai/reviewEngine';
 import { roomManager } from './multiplayer/roomManager';
-import { Sparkles, ListOrdered } from 'lucide-react';
+import { Sparkles, ListOrdered, BarChart3 } from 'lucide-react';
 
 export default function App() {
   // Settings & Local Preferences
@@ -564,6 +565,17 @@ export default function App() {
                 <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
               )}
             </button>
+            <button
+              onClick={() => setActiveRightTab('stats')}
+              className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                activeRightTab === 'stats'
+                  ? 'bg-emerald-500 text-neutral-950 shadow-sm'
+                  : 'text-neutral-400 hover:text-emerald-300'
+              }`}
+            >
+              <BarChart3 className="w-3.5 h-3.5" />
+              <span>Stats</span>
+            </button>
           </div>
 
           {/* Tab 1: Move History */}
@@ -586,7 +598,7 @@ export default function App() {
               gameOver={gameOver}
               turn={turn}
               ratedMoves={ratedMoves}
-              onOpenReview={() => setIsGameReviewOpen?.(true)}
+              onOpenReview={() => setIsGameReviewOpen(true)}
             />
           )}
 
@@ -603,6 +615,21 @@ export default function App() {
               ratedHistory={ratedMoves}
               onJumpToMove={jumpToMove}
               currentStep={currentStep}
+            />
+          )}
+
+          {/* Tab 3: Real-Time Stats Panel */}
+          {activeRightTab === 'stats' && (
+            <StatsPanel
+              ratedMoves={ratedMoves}
+              whitePlayerName={bottomPlayerInfo.name}
+              blackPlayerName={topPlayerInfo.name}
+              whiteElo={stats.elo}
+              blackElo={topPlayerInfo.rating}
+              careerStats={stats}
+              matchHistory={matchHistory}
+              onOpenFullStats={() => setIsStatsOpen(true)}
+              currentEvalScore={evalScore}
             />
           )}
         </div>
