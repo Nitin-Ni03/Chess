@@ -4,6 +4,7 @@ import { ChessBoard } from './components/ChessBoard';
 import { PlayerCard } from './components/PlayerCard';
 import { EvalBar } from './components/EvalBar';
 import { MoveHistoryPanel } from './components/MoveHistoryPanel';
+import { CoachPanel } from './components/CoachPanel';
 import { PromotionModal } from './components/PromotionModal';
 import { SettingsModal } from './components/SettingsModal';
 import { StatsModal } from './components/StatsModal';
@@ -15,7 +16,9 @@ import { soundService } from './services/soundService';
 import { storage } from './utils/storage';
 import { exportPGNContent } from './utils/chessHelpers';
 import { findBestMove, getMoveHint, getPositionEvalScore } from './ai/chessAI';
+import { analyzeMove } from './ai/reviewEngine';
 import { roomManager } from './multiplayer/roomManager';
+import { Sparkles, ListOrdered } from 'lucide-react';
 
 export default function App() {
   // Settings & Local Preferences
@@ -42,6 +45,11 @@ export default function App() {
   const [currentRoomCode, setCurrentRoomCode] = useState(null);
   const [myMultiplayerRole, setMyMultiplayerRole] = useState('w'); // 'w' | 'b' | 'spectator'
   const [isPeerConnected, setIsPeerConnected] = useState(false);
+
+  // Coach & Real-Time Move Rating state
+  const [ratedMoves, setRatedMoves] = useState([]);
+  const [activeRightTab, setActiveRightTab] = useState('moves'); // 'moves' | 'coach'
+  const [isBestMoveArrowVisible, setIsBestMoveArrowVisible] = useState(false);
 
   // Initialize Core Game Hook
   const {
@@ -127,6 +135,62 @@ export default function App() {
   const evalScore = useMemo(() => {
     return getPositionEvalScore(chess);
   }, [chess, fen]);
+
+  // Sync rated moves incrementally with game history
+  useEffect(() => {
+    if (history.length === 0) {
+      setRatedMoves([]);
+      return;
+    }
+
+    if (ratedMoves.length < history.length) {
+      const updated = [...ratedMoves];
+      for (let i = ratedMoves.length; i < history.length; i++) {
+        const prevFen = i === 0 ? 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1' : history[i - 1].fen;
+        const analyzed = analyzeMove({
+          fenBefore: prevFen,
+          move: history[i],
+          moveIndex: i,
+          moveHistorySoFar: history.slice(0, i + 1),
+        });
+        updated.push(analyzed);
+      }
+      setRatedMoves(updated);
+    } else if (ratedMoves.length > history.length) {
+      setRatedMoves((prev) => prev.slice(0, history.length));
+    }
+  }, [history]);
+
+  // Active rated move (reflects currently viewed step or latest move)
+  const currentRatedMove = useMemo(() => {
+    if (ratedMoves.length === 0) return null;
+    if (currentStep >= 0 && currentStep < ratedMoves.length) {
+      return ratedMoves[currentStep];
+    }
+    return ratedMoves[ratedMoves.length - 1];
+  }, [ratedMoves, currentStep]);
+
+  // Board visual overlays: arrows and square badge
+  const boardArrows = useMemo(() => {
+    const list = [];
+    if (hintData) {
+      list.push({ from: hintData.from, to: hintData.to, color: '#38bdf8', opacity: 0.9 });
+    }
+    if (isBestMoveArrowVisible && currentRatedMove?.bestMove) {
+      list.push({ from: currentRatedMove.bestMove.from, to: currentRatedMove.bestMove.to, color: '#10b981', opacity: 0.95 });
+    }
+    return list;
+  }, [hintData, isBestMoveArrowVisible, currentRatedMove]);
+
+  const boardMoveBadge = useMemo(() => {
+    if (!currentRatedMove) return null;
+    return {
+      square: currentRatedMove.to,
+      symbol: currentRatedMove.tier?.symbol,
+      label: currentRatedMove.tier?.label,
+      badgeClass: currentRatedMove.tier?.badgeClass,
+    };
+  }, [currentRatedMove]);
 
   // Human player makes a move
   const handlePlayerMove = useCallback(
@@ -422,6 +486,8 @@ export default function App() {
               customLightColor={settings.customLightColor}
               customDarkColor={settings.customDarkColor}
               disabled={isAiThinking || (gameMode === 'multiplayer' && myMultiplayerRole === 'spectator')}
+              moveBadge={boardMoveBadge}
+              arrows={boardArrows}
             />
 
             {/* AI Thinking Floating Indicator */}
@@ -464,26 +530,77 @@ export default function App() {
           </div>
         </div>
 
-        {/* Right: Move History Panel, Analysis Tools & Actions */}
-        <div className="w-full lg:w-80 flex-shrink-0">
-          <MoveHistoryPanel
-            history={history}
-            currentStep={currentStep}
-            onJumpToMove={jumpToMove}
-            onUndo={undoMove}
-            onRedo={redoMove}
-            onGetHint={handleGetHint}
-            hintData={hintData}
-            onResetGame={() => resetGame()}
-            onResign={(c) => resign(c)}
-            onOfferDraw={agreeDraw}
-            onFlipBoard={handleToggleFlip}
-            onOpenImportModal={() => setIsImportOpen(true)}
-            getPGN={handleGetPGN}
-            fen={fen}
-            gameOver={gameOver}
-            turn={turn}
-          />
+        {/* Right: Tabbed Move History / Coach Panel */}
+        <div className="w-full lg:w-80 flex-shrink-0 flex flex-col gap-2">
+          {/* Panel Tab Switcher */}
+          <div className="flex items-center bg-neutral-900/90 p-1 rounded-xl border border-white/10 shadow-md">
+            <button
+              onClick={() => setActiveRightTab('moves')}
+              className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                activeRightTab === 'moves'
+                  ? 'bg-amber-500 text-neutral-950 shadow-sm'
+                  : 'text-neutral-400 hover:text-neutral-200'
+              }`}
+            >
+              <ListOrdered className="w-3.5 h-3.5" />
+              <span>Moves</span>
+              <span className="text-[10px] font-mono opacity-80">({history.length})</span>
+            </button>
+            <button
+              onClick={() => setActiveRightTab('coach')}
+              className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-semibold transition-all relative ${
+                activeRightTab === 'coach'
+                  ? 'bg-cyan-500 text-neutral-950 shadow-sm'
+                  : 'text-neutral-400 hover:text-cyan-300'
+              }`}
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Coach</span>
+              {currentRatedMove && (
+                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+              )}
+            </button>
+          </div>
+
+          {/* Tab 1: Move History */}
+          {activeRightTab === 'moves' && (
+            <MoveHistoryPanel
+              history={history}
+              currentStep={currentStep}
+              onJumpToMove={jumpToMove}
+              onUndo={undoMove}
+              onRedo={redoMove}
+              onGetHint={handleGetHint}
+              hintData={hintData}
+              onResetGame={() => resetGame()}
+              onResign={(c) => resign(c)}
+              onOfferDraw={agreeDraw}
+              onFlipBoard={handleToggleFlip}
+              onOpenImportModal={() => setIsImportOpen(true)}
+              getPGN={handleGetPGN}
+              fen={fen}
+              gameOver={gameOver}
+              turn={turn}
+              ratedMoves={ratedMoves}
+              onOpenReview={() => setIsGameReviewOpen?.(true)}
+            />
+          )}
+
+          {/* Tab 2: Interactive Coach Panel */}
+          {activeRightTab === 'coach' && (
+            <CoachPanel
+              lastRatedMove={currentRatedMove}
+              onAskCoachHint={handleGetHint}
+              hintData={hintData}
+              turn={turn}
+              isAiThinking={isAiThinking}
+              onShowBestMoveArrow={setIsBestMoveArrowVisible}
+              isBestMoveArrowVisible={isBestMoveArrowVisible}
+              ratedHistory={ratedMoves}
+              onJumpToMove={jumpToMove}
+              currentStep={currentStep}
+            />
+          )}
         </div>
       </main>
 

@@ -32,6 +32,8 @@ export function MoveHistoryPanel({
   fen,
   gameOver = false,
   turn = 'w',
+  ratedMoves = [],
+  onOpenReview,
 }) {
   const scrollRef = useRef(null);
   const [copiedPgn, setCopiedPgn] = React.useState(false);
@@ -45,12 +47,14 @@ export function MoveHistoryPanel({
         num: Math.floor(i / 2) + 1,
         white: history[i],
         whiteIdx: i,
+        whiteRating: ratedMoves[i] || null,
         black: history[i + 1] || null,
         blackIdx: i + 1,
+        blackRating: ratedMoves[i + 1] || null,
       });
     }
     return pairs;
-  }, [history]);
+  }, [history, ratedMoves]);
 
   // Auto-scroll to active move
   useEffect(() => {
@@ -84,12 +88,24 @@ export function MoveHistoryPanel({
     <div className="glass-panel rounded-2xl flex flex-col h-full overflow-hidden border border-white/10 shadow-xl">
       {/* Header */}
       <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between bg-neutral-900/40">
-        <h3 className="font-serif font-bold text-sm tracking-wide text-amber-200">
-          Move History
-        </h3>
-        <span className="text-xs text-neutral-400 font-mono">
-          {history.length} {history.length === 1 ? 'move' : 'moves'}
-        </span>
+        <div className="flex items-center gap-2">
+          <h3 className="font-serif font-bold text-sm tracking-wide text-amber-200">
+            Move History
+          </h3>
+          <span className="text-xs text-neutral-400 font-mono">
+            {history.length} {history.length === 1 ? 'move' : 'moves'}
+          </span>
+        </div>
+
+        {/* Game Review Quick Trigger */}
+        {onOpenReview && history.length > 0 && (
+          <button
+            onClick={onOpenReview}
+            className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold tracking-wide flex items-center gap-1 shadow-sm transition-all active:scale-95"
+          >
+            Review Game
+          </button>
+        )}
       </div>
 
       {/* Move List */}
@@ -111,26 +127,46 @@ export function MoveHistoryPanel({
               {/* White move */}
               <button
                 onClick={() => onJumpToMove(pair.whiteIdx)}
-                className={`col-span-5 text-left px-2 py-0.5 rounded font-semibold transition-all ${
+                className={`col-span-5 text-left px-2 py-0.5 rounded font-semibold transition-all flex items-center justify-between ${
                   currentStep === pair.whiteIdx
                     ? 'active-move-step bg-amber-500 text-neutral-950 shadow-sm'
                     : 'text-neutral-200 hover:text-amber-300'
                 }`}
               >
-                {pair.white.san}
+                <span>{pair.white.san}</span>
+                {pair.whiteRating && (
+                  <span
+                    className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[9px] font-black shrink-0 ${
+                      pair.whiteRating.tier?.badgeClass || 'bg-emerald-500 text-neutral-950'
+                    }`}
+                    title={pair.whiteRating.tier?.label}
+                  >
+                    {pair.whiteRating.tier?.symbol}
+                  </span>
+                )}
               </button>
 
               {/* Black move */}
               {pair.black ? (
                 <button
                   onClick={() => onJumpToMove(pair.blackIdx)}
-                  className={`col-span-5 text-left px-2 py-0.5 rounded font-semibold transition-all ${
+                  className={`col-span-5 text-left px-2 py-0.5 rounded font-semibold transition-all flex items-center justify-between ${
                     currentStep === pair.blackIdx
                       ? 'active-move-step bg-amber-500 text-neutral-950 shadow-sm'
                       : 'text-neutral-200 hover:text-amber-300'
                   }`}
                 >
-                  {pair.black.san}
+                  <span>{pair.black.san}</span>
+                  {pair.blackRating && (
+                    <span
+                      className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[9px] font-black shrink-0 ${
+                        pair.blackRating.tier?.badgeClass || 'bg-emerald-500 text-neutral-950'
+                      }`}
+                      title={pair.blackRating.tier?.label}
+                    >
+                      {pair.blackRating.tier?.symbol}
+                    </span>
+                  )}
                 </button>
               ) : (
                 <div className="col-span-5" />
