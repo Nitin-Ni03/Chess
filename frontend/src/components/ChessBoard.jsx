@@ -227,7 +227,7 @@ export function ChessBoard({
                             draggingSquare === square ? 'dragging' : ''
                           }`}
                         >
-                          <ChessPiece piece={piece} />
+                          <ChessPiece piece={piece} theme={theme} />
                         </div>
                       )}
 

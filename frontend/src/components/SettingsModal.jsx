@@ -11,12 +11,21 @@ export function SettingsModal({
   if (!isOpen) return null;
 
   const themes = [
-    { id: 'wood', name: 'Classic Wood', light: '#e3c193', dark: '#8b4a24' },
-    { id: 'marble', name: 'Marble', light: '#e2e8f0', dark: '#64748b' },
-    { id: 'gold', name: 'Royal Gold', light: '#fae8b2', dark: '#b8860b' },
-    { id: 'darkmodern', name: 'Dark Modern', light: '#32374a', dark: '#1a1c24' },
-    { id: 'cyberpunk', name: 'Cyberpunk', light: '#06b6d4', dark: '#d946ef' },
-    { id: 'neon', name: 'Neon Emerald', light: '#a7f3d0', dark: '#059669' },
+    // ── Classic board themes ──────────────────────────────────────────────────
+    { id: 'wood',           name: 'Classic Wood',       light: '#e3c193', dark: '#8b4a24',  tag: null },
+    { id: 'marble',         name: 'Marble',             light: '#e2e8f0', dark: '#64748b',  tag: null },
+    { id: 'gold',           name: 'Royal Gold',         light: '#fae8b2', dark: '#b8860b',  tag: null },
+    { id: 'darkmodern',     name: 'Dark Modern',        light: '#32374a', dark: '#1a1c24',  tag: null },
+    { id: 'cyberpunk',      name: 'Cyberpunk',          light: '#06b6d4', dark: '#d946ef',  tag: null },
+    { id: 'neon',           name: 'Neon Emerald',       light: '#a7f3d0', dark: '#059669',  tag: null },
+    // ── Marvel character themes ────────────────────────────────────────────────
+    { id: 'marvel-avengers', name: 'Avengers',          light: '#fef3c7', dark: '#1e3a8a',  tag: '🦸 MARVEL' },
+    { id: 'marvel-xmen',     name: 'X-Men',             light: '#fef08a', dark: '#4c1d95',  tag: '⚡ MARVEL' },
+    // ── Naruto character theme ─────────────────────────────────────────────────
+    { id: 'naruto',          name: 'Naruto',            light: '#dcfce7', dark: '#881337',  tag: '🍃 NARUTO' },
+    // ── Extra board-only themes ───────────────────────────────────────────────
+    { id: 'infinity',        name: 'Infinity Stone',    light: '#ede9fe', dark: '#4c1d95',  tag: '💎 MARVEL' },
+    { id: 'shinobi',         name: 'Shinobi Night',     light: '#1e3a5f', dark: '#0a0f1a',  tag: '🌙 NARUTO' },
   ];
 
   const difficulties = [
@@ -62,8 +71,11 @@ export function SettingsModal({
               <Palette className="w-3.5 h-3.5 text-amber-400" />
               Board Theme
             </label>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-              {themes.map((t) => (
+
+            {/* Classic board themes */}
+            <p className="text-[10px] text-neutral-500 uppercase tracking-wider mb-1.5">Classic Boards</p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 mb-4">
+              {themes.filter(t => !t.tag).map((t) => (
                 <button
                   key={t.id}
                   onClick={() => onUpdateSetting('theme', t.id)}
@@ -78,6 +90,60 @@ export function SettingsModal({
                     <div className="w-1/2 h-full" style={{ backgroundColor: t.dark }} />
                   </div>
                   <span className="text-xs font-medium text-neutral-200 truncate">{t.name}</span>
+                </button>
+              ))}
+            </div>
+
+            {/* Marvel character themes */}
+            <p className="text-[10px] text-red-400 uppercase tracking-wider mb-1.5 flex items-center gap-1">
+              <span>🦸</span> Marvel Character Themes
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 mb-4">
+              {themes.filter(t => t.tag && t.tag.includes('MARVEL')).map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => onUpdateSetting('theme', t.id)}
+                  className={`p-2.5 rounded-xl border flex items-center gap-2 text-left transition-all relative overflow-hidden ${
+                    settings.theme === t.id
+                      ? 'border-red-500 bg-red-500/10 ring-1 ring-red-500'
+                      : 'border-neutral-800 bg-neutral-900/60 hover:border-red-900'
+                  }`}
+                >
+                  <div className="w-6 h-6 rounded-md overflow-hidden flex border border-black/30 shadow-sm flex-shrink-0">
+                    <div className="w-1/2 h-full" style={{ backgroundColor: t.light }} />
+                    <div className="w-1/2 h-full" style={{ backgroundColor: t.dark }} />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-xs font-medium text-neutral-200 truncate">{t.name}</div>
+                    <div className="text-[9px] text-red-400 font-semibold">{t.tag}</div>
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            {/* Naruto character themes */}
+            <p className="text-[10px] text-orange-400 uppercase tracking-wider mb-1.5 flex items-center gap-1">
+              <span>🍃</span> Naruto Character Themes
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+              {themes.filter(t => t.tag && t.tag.includes('NARUTO')).map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => onUpdateSetting('theme', t.id)}
+                  className={`p-2.5 rounded-xl border flex items-center gap-2 text-left transition-all relative overflow-hidden ${
+                    settings.theme === t.id
+                      ? 'border-orange-500 bg-orange-500/10 ring-1 ring-orange-500'
+                      : 'border-neutral-800 bg-neutral-900/60 hover:border-orange-900'
+                  }`}
+                >
+                  <div className="w-6 h-6 rounded-md overflow-hidden flex border border-black/30 shadow-sm flex-shrink-0">
+                    <div className="w-1/2 h-full" style={{ backgroundColor: t.light }} />
+                    <div className="w-1/2 h-full" style={{ backgroundColor: t.dark }} />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-xs font-medium text-neutral-200 truncate">{t.name}</div>
+                    <div className="text-[9px] text-orange-400 font-semibold">{t.tag}</div>
+                  </div>
                 </button>
               ))}
             </div>

@@ -101,6 +101,61 @@
   --board-shadow: rgba(5, 150, 105, 0.4);
 }
 
+/* 7. Marvel Avengers — Iron Man Gold / Deep Space Blue */
+.theme-marvel-avengers {
+  --board-border: #7c2d12;
+  --board-bevel: #431407;
+  --sq-light: #fef3c7;
+  --sq-dark: #1e3a8a;
+  --sq-light-text: #92400e;
+  --sq-dark-text: #bfdbfe;
+  --board-shadow: rgba(220, 38, 38, 0.55);
+}
+
+/* 8. Marvel X-Men — Xavier Yellow / Brotherhood Purple */
+.theme-marvel-xmen {
+  --board-border: #3b0764;
+  --board-bevel: #1e0138;
+  --sq-light: #fef08a;
+  --sq-dark: #4c1d95;
+  --sq-light-text: #713f12;
+  --sq-dark-text: #e9d5ff;
+  --board-shadow: rgba(168, 85, 247, 0.5);
+}
+
+/* 9. Naruto — Leaf Village Green / Akatsuki Crimson */
+.theme-naruto {
+  --board-border: #14532d;
+  --board-bevel: #052e16;
+  --sq-light: #dcfce7;
+  --sq-dark: #881337;
+  --sq-light-text: #166534;
+  --sq-dark-text: #fecdd3;
+  --board-shadow: rgba(220, 38, 38, 0.45);
+}
+
+/* 10. Infinity Stone — Cosmic Purple / Galactic Gold */
+.theme-infinity {
+  --board-border: #2e1065;
+  --board-bevel: #1a0845;
+  --sq-light: #ede9fe;
+  --sq-dark: #4c1d95;
+  --sq-light-text: #5b21b6;
+  --sq-dark-text: #ddd6fe;
+  --board-shadow: rgba(124, 58, 237, 0.6);
+}
+
+/* 11. Shinobi Night — Moonlit Blue / Shadow Black */
+.theme-shinobi {
+  --board-border: #0c1a2e;
+  --board-bevel: #060d18;
+  --sq-light: #1e3a5f;
+  --sq-dark: #0a0f1a;
+  --sq-light-text: #93c5fd;
+  --sq-dark-text: #60a5fa;
+  --board-shadow: rgba(14, 165, 233, 0.4);
+}
+
 /* Board 3D Frame & Edge Styling */
 .board-outer-frame {
   background: var(--board-border);
@@ -110,6 +165,94 @@
     inset 0 2px 4px rgba(255, 255, 255, 0.15),
     inset 0 -3px 6px rgba(0, 0, 0, 0.6);
 }
+
+/* Marvel Avengers — Animated hex-pattern background overlay */
+.theme-marvel-avengers .board-outer-frame {
+  background: linear-gradient(135deg, #7c2d12 0%, #431407 50%, #7c2d12 100%);
+  box-shadow:
+    0 0 40px rgba(220, 38, 38, 0.6),
+    0 25px 50px -12px rgba(220, 38, 38, 0.55),
+    0 10px 0 0 var(--board-bevel),
+    inset 0 2px 4px rgba(255, 180, 80, 0.3),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.7);
+}
+
+/* Marvel X-Men — Purple mutant energy */
+.theme-marvel-xmen .board-outer-frame {
+  background: linear-gradient(135deg, #3b0764 0%, #1e0138 50%, #3b0764 100%);
+  box-shadow:
+    0 0 40px rgba(168, 85, 247, 0.65),
+    0 25px 50px -12px rgba(168, 85, 247, 0.5),
+    0 10px 0 0 var(--board-bevel),
+    inset 0 2px 4px rgba(250, 204, 21, 0.25),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.7);
+}
+
+/* Naruto — Forest / Blood energy */
+.theme-naruto .board-outer-frame {
+  background: linear-gradient(135deg, #14532d 0%, #052e16 50%, #14532d 100%);
+  box-shadow:
+    0 0 40px rgba(220, 38, 38, 0.5),
+    0 25px 50px -12px rgba(220, 38, 38, 0.45),
+    0 10px 0 0 var(--board-bevel),
+    inset 0 2px 4px rgba(74, 222, 128, 0.3),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.7);
+}
+
+/* Infinity Stone — cosmic shimmer */
+.theme-infinity .board-outer-frame {
+  background: linear-gradient(135deg, #2e1065 0%, #1a0845 50%, #2e1065 100%);
+  box-shadow:
+    0 0 50px rgba(167, 139, 250, 0.7),
+    0 25px 50px -12px rgba(124, 58, 237, 0.6),
+    0 10px 0 0 var(--board-bevel),
+    inset 0 2px 4px rgba(221, 214, 254, 0.35),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.75);
+}
+
+/* Shinobi Night — moonlit stealth */
+.theme-shinobi .board-outer-frame {
+  background: linear-gradient(135deg, #0c1a2e 0%, #060d18 50%, #0c1a2e 100%);
+  box-shadow:
+    0 0 40px rgba(14, 165, 233, 0.4),
+    0 25px 50px -12px rgba(14, 165, 233, 0.4),
+    0 10px 0 0 var(--board-bevel),
+    inset 0 2px 4px rgba(147, 197, 253, 0.2),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.8);
+}
+
+/* ── Marvel Avengers animated glow pulse ───────────────────────────────── */
+@keyframes marvelGlow {
+  0%, 100% { box-shadow: 0 0 40px rgba(220, 38, 38, 0.6), 0 25px 50px -12px rgba(220, 38, 38, 0.55), 0 10px 0 0 var(--board-bevel), inset 0 2px 4px rgba(255, 180, 80, 0.3), inset 0 -3px 6px rgba(0,0,0,0.7); }
+  50%       { box-shadow: 0 0 60px rgba(220, 38, 38, 0.9), 0 25px 50px -12px rgba(220, 38, 38, 0.8), 0 10px 0 0 var(--board-bevel), inset 0 2px 4px rgba(255, 180, 80, 0.5), inset 0 -3px 6px rgba(0,0,0,0.7); }
+}
+.theme-marvel-avengers .board-outer-frame { animation: marvelGlow 3s ease-in-out infinite; }
+
+@keyframes xmenGlow {
+  0%, 100% { box-shadow: 0 0 40px rgba(168, 85, 247, 0.65), 0 25px 50px -12px rgba(168, 85, 247, 0.5), 0 10px 0 0 var(--board-bevel), inset 0 2px 4px rgba(250, 204, 21, 0.25), inset 0 -3px 6px rgba(0,0,0,0.7); }
+  50%       { box-shadow: 0 0 65px rgba(168, 85, 247, 0.9), 0 25px 50px -12px rgba(168, 85, 247, 0.8), 0 10px 0 0 var(--board-bevel), inset 0 2px 4px rgba(250, 204, 21, 0.4), inset 0 -3px 6px rgba(0,0,0,0.7); }
+}
+.theme-marvel-xmen .board-outer-frame { animation: xmenGlow 3s ease-in-out infinite; }
+
+@keyframes narutoGlow {
+  0%, 100% { box-shadow: 0 0 35px rgba(74, 222, 128, 0.4), 0 25px 50px -12px rgba(220, 38, 38, 0.45), 0 10px 0 0 var(--board-bevel), inset 0 2px 4px rgba(74, 222, 128, 0.3), inset 0 -3px 6px rgba(0,0,0,0.7); }
+  50%       { box-shadow: 0 0 55px rgba(220, 38, 38, 0.6), 0 25px 50px -12px rgba(74, 222, 128, 0.4), 0 10px 0 0 var(--board-bevel), inset 0 2px 4px rgba(74, 222, 128, 0.5), inset 0 -3px 6px rgba(0,0,0,0.7); }
+}
+.theme-naruto .board-outer-frame { animation: narutoGlow 4s ease-in-out infinite; }
+
+@keyframes infinityGlow {
+  0%   { box-shadow: 0 0 50px rgba(167, 139, 250, 0.7), 0 25px 50px -12px rgba(124, 58, 237, 0.6), 0 10px 0 0 var(--board-bevel), inset 0 2px 4px rgba(221, 214, 254, 0.35), inset 0 -3px 6px rgba(0,0,0,0.75); }
+  33%  { box-shadow: 0 0 55px rgba(59, 130, 246, 0.7), 0 25px 50px -12px rgba(99, 102, 241, 0.6), 0 10px 0 0 var(--board-bevel), inset 0 2px 4px rgba(221, 214, 254, 0.35), inset 0 -3px 6px rgba(0,0,0,0.75); }
+  66%  { box-shadow: 0 0 55px rgba(220, 38, 38, 0.65), 0 25px 50px -12px rgba(239, 68, 68, 0.55), 0 10px 0 0 var(--board-bevel), inset 0 2px 4px rgba(221, 214, 254, 0.35), inset 0 -3px 6px rgba(0,0,0,0.75); }
+  100% { box-shadow: 0 0 50px rgba(167, 139, 250, 0.7), 0 25px 50px -12px rgba(124, 58, 237, 0.6), 0 10px 0 0 var(--board-bevel), inset 0 2px 4px rgba(221, 214, 254, 0.35), inset 0 -3px 6px rgba(0,0,0,0.75); }
+}
+.theme-infinity .board-outer-frame { animation: infinityGlow 5s linear infinite; }
+
+@keyframes shinobiGlow {
+  0%, 100% { box-shadow: 0 0 30px rgba(14, 165, 233, 0.35), 0 25px 50px -12px rgba(14, 165, 233, 0.4), 0 10px 0 0 var(--board-bevel), inset 0 2px 4px rgba(147, 197, 253, 0.2), inset 0 -3px 6px rgba(0,0,0,0.8); }
+  50%       { box-shadow: 0 0 50px rgba(14, 165, 233, 0.6), 0 25px 50px -12px rgba(14, 165, 233, 0.6), 0 10px 0 0 var(--board-bevel), inset 0 2px 4px rgba(147, 197, 253, 0.35), inset 0 -3px 6px rgba(0,0,0,0.8); }
+}
+.theme-shinobi .board-outer-frame { animation: shinobiGlow 3.5s ease-in-out infinite; }
 
 /* Glassmorphism Classes */
 .glass-panel {
