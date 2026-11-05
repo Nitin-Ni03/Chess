@@ -424,8 +424,26 @@ export default function App() {
     };
   }, [boardFlipped, stats.elo, gameMode, settings.difficulty, timers, captured, advantage, isPeerConnected]);
 
+  // Dynamic background per theme
+  const appBg = useMemo(() => {
+    switch (settings.theme) {
+      case 'marvel-avengers':
+        return 'bg-[#070a12] [background-image:radial-gradient(ellipse_80%_60%_at_50%_0%,rgba(127,29,18,0.35)_0%,transparent_70%)]';
+      case 'marvel-xmen':
+        return 'bg-[#07040f] [background-image:radial-gradient(ellipse_80%_60%_at_50%_0%,rgba(76,29,149,0.4)_0%,transparent_70%)]';
+      case 'naruto':
+        return 'bg-[#050d08] [background-image:radial-gradient(ellipse_80%_60%_at_50%_0%,rgba(20,83,45,0.4)_0%,transparent_60%),radial-gradient(ellipse_60%_40%_at_80%_80%,rgba(136,19,55,0.3)_0%,transparent_70%)]';
+      case 'infinity':
+        return 'bg-[#06030f] [background-image:radial-gradient(ellipse_80%_60%_at_50%_0%,rgba(109,40,217,0.4)_0%,transparent_70%)]';
+      case 'shinobi':
+        return 'bg-[#02050a] [background-image:radial-gradient(ellipse_80%_60%_at_50%_0%,rgba(12,30,50,0.6)_0%,transparent_70%)]';
+      default:
+        return 'bg-[#0b0d13]';
+    }
+  }, [settings.theme]);
+
   return (
-    <div className="min-h-screen flex flex-col bg-[#0b0d13] text-neutral-100">
+    <div className={`min-h-screen flex flex-col text-neutral-100 transition-colors duration-700 ${appBg}`}>
       {/* Top Header */}
       <Header
         gameMode={gameMode}
@@ -494,6 +512,33 @@ export default function App() {
               moveBadge={boardMoveBadge}
               arrows={boardArrows}
             />
+
+            {/* Character Theme Label Badge */}
+            {settings.theme === 'marvel-avengers' && (
+              <div className="absolute -bottom-7 left-1/2 -translate-x-1/2 z-20 px-3 py-0.5 rounded-full bg-red-950/80 border border-red-500/50 backdrop-blur-md text-[10px] font-bold text-red-300 tracking-widest whitespace-nowrap select-none">
+                🦸 MARVEL AVENGERS vs VILLAINS
+              </div>
+            )}
+            {settings.theme === 'marvel-xmen' && (
+              <div className="absolute -bottom-7 left-1/2 -translate-x-1/2 z-20 px-3 py-0.5 rounded-full bg-purple-950/80 border border-purple-500/50 backdrop-blur-md text-[10px] font-bold text-purple-300 tracking-widest whitespace-nowrap select-none">
+                ⚡ X-MEN vs BROTHERHOOD
+              </div>
+            )}
+            {settings.theme === 'naruto' && (
+              <div className="absolute -bottom-7 left-1/2 -translate-x-1/2 z-20 px-3 py-0.5 rounded-full bg-green-950/80 border border-green-500/50 backdrop-blur-md text-[10px] font-bold text-green-300 tracking-widest whitespace-nowrap select-none">
+                🍃 LEAF VILLAGE vs AKATSUKI
+              </div>
+            )}
+            {settings.theme === 'infinity' && (
+              <div className="absolute -bottom-7 left-1/2 -translate-x-1/2 z-20 px-3 py-0.5 rounded-full bg-violet-950/80 border border-violet-500/50 backdrop-blur-md text-[10px] font-bold text-violet-300 tracking-widest whitespace-nowrap select-none">
+                💎 INFINITY STONES BOARD
+              </div>
+            )}
+            {settings.theme === 'shinobi' && (
+              <div className="absolute -bottom-7 left-1/2 -translate-x-1/2 z-20 px-3 py-0.5 rounded-full bg-sky-950/80 border border-sky-500/50 backdrop-blur-md text-[10px] font-bold text-sky-300 tracking-widest whitespace-nowrap select-none">
+                🌙 SHINOBI NIGHT BOARD
+              </div>
+            )}
 
             {/* AI Thinking Floating Indicator */}
             {isAiThinking && (
